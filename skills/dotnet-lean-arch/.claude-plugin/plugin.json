@@ -1,0 +1,13 @@
+{
+  "name": "dotnet-lean-arch",
+  "version": "1.0.0",
+  "description": "Blueprint pragmatico de Clean Architecture para backends .NET: 4 camadas, sem MediatR, Result pattern, EF Core, Aspire, Serilog/OpenTelemetry.",
+  "author": {
+    "name": "Joao Brambilla",
+    "email": "jotabram@gmail.com"
+  },
+  "repository": "https://github.com/jbrambilla/dotnet-lean-arch-skill",
+  "homepage": "https://github.com/jbrambilla/dotnet-lean-arch-skill",
+  "license": "MIT",
+  "keywords": ["dotnet", "csharp", "clean-architecture", "backend", "api", "blueprint"]
+}

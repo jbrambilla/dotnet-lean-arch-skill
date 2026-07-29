@@ -1,0 +1,45 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run validation
+        run: bash scripts/validate.sh
+
+      - name: Check tag matches plugin version
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          PLUGIN_VERSION="$(grep -oE '"version"[[:space:]]*:[[:space:]]*"[^"]+"' \
+            skills/dotnet-lean-arch/.claude-plugin/plugin.json \
+            | head -n1 | sed -E 's/.*"([^"]+)"$/\1/')"
+          if [ "$TAG_VERSION" != "$PLUGIN_VERSION" ]; then
+            echo "Tag v$TAG_VERSION diverge da versao do plugin.json ($PLUGIN_VERSION)"
+            exit 1
+          fi
+
+      - name: Build ZIP (skill folder at ZIP root)
+        run: |
+          cd skills
+          zip -r "../dotnet-lean-arch-${GITHUB_REF_NAME}.zip" \
+            dotnet-lean-arch \
+            -x "dotnet-lean-arch/.claude-plugin/*"
+
+      - name: Create GitHub Release with ZIP attached
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            "dotnet-lean-arch-${GITHUB_REF_NAME}.zip" \
+            --title "$GITHUB_REF_NAME" \
+            --generate-notes

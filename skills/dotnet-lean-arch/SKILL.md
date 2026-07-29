@@ -1,13 +1,7 @@
 ---
-name: dotnet-clean-arch-blueprint
-description: >-
-  Blueprint arquitetural agnostico para construir backends .NET (Clean Architecture
-  em 4 camadas, .NET 10, sem MediatR, Result pattern, validacao em dois niveis,
-  configuracao tipada, EF Core, Aspire, Serilog/OpenTelemetry). Use esta skill
-  SEMPRE que for criar um novo backend/API em .NET do zero, fazer scaffolding de
-  uma solucao .NET, montar camadas Domain/Application/Infra/Api, ou quando o usuario
-  mencionar Clean Architecture, UseCase, IEndpoint, Result pattern, IApplicationDbContext
-  em contexto .NET/C#. Tambem ao adicionar endpoint ou usecase novo seguindo este padrao.
+name: dotnet-lean-arch
+description: "Use ao criar backend/API .NET do zero ou adicionar endpoint/usecase com Clean Architecture pragmatica em 4 camadas (.NET 10, sem MediatR, Result pattern, EF Core, Aspire). Gatilhos: Clean Architecture, UseCase, IEndpoint, IApplicationDbContext."
+version: 1.0.0
 ---
 
 > **Esta skill e um blueprint portavel.** O corpo abaixo diz *como atuar*; os
@@ -25,7 +19,7 @@ description: >-
 ## Como esta skill está organizada
 
 ```
-dotnet-clean-arch-blueprint/
+dotnet-lean-arch/
 ├── SKILL.md         ← você está aqui (como atuar)
 └── references/
     ├── index.md                 ← mapa de navegação (filosofia + fluxo de dependências)

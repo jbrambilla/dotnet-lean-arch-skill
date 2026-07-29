@@ -1,0 +1,18 @@
+# Allowlist explicito: ignora tudo por padrao e libera apenas o que e versionado.
+*
+!*/
+
+!.gitignore
+!LICENSE
+!README.md
+!CHANGELOG.md
+!.claude-plugin/marketplace.json
+!skills/**
+!evals/**
+!scripts/validate.sh
+!.github/**
+
+# Nunca versionar, mesmo dentro de pastas liberadas
+*.zip
+*.local.*
+.env
