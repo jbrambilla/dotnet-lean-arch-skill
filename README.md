@@ -53,11 +53,9 @@ Indice completo em [references/index.md](skills/dotnet-lean-arch/references/inde
 
 ## Contribuindo
 
-- Toda mudanca via PR; CI roda `scripts/validate.sh` e o merge exige verde.
-- Commits seguem [Conventional Commits](https://www.conventionalcommits.org).
-- Mudou comportamento da skill? Incremente a versao (SKILL.md, plugin.json,
-  marketplace.json) e registre no [CHANGELOG](CHANGELOG.md).
-- Release: tag `v<versao>` gera o ZIP na GitHub Release automaticamente.
+Toda mudanca via PR com CI verde; commits seguem
+[Conventional Commits](https://www.conventionalcommits.org). Regras de
+versionamento e manutencao: [AGENTS.md](AGENTS.md) e [CHANGELOG](CHANGELOG.md).
 
 ## Licenca
 

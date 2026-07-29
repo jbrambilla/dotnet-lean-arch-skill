@@ -11,6 +11,8 @@
 !evals/**
 !scripts/validate.sh
 !.github/**
+!CLAUDE.md
+!AGENTS.md
 
 # Nunca versionar, mesmo dentro de pastas liberadas
 *.zip
