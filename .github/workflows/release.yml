@@ -24,7 +24,7 @@ jobs:
             skills/dotnet-lean-arch/.claude-plugin/plugin.json \
             | head -n1 | sed -E 's/.*"([^"]+)"$/\1/')"
           if [ "$TAG_VERSION" != "$PLUGIN_VERSION" ]; then
-            echo "Tag v$TAG_VERSION diverge da versao do plugin.json ($PLUGIN_VERSION)"
+            echo "Tag v$TAG_VERSION does not match plugin.json version ($PLUGIN_VERSION)"
             exit 1
           fi
 

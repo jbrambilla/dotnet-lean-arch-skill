@@ -1,4 +1,4 @@
-# Allowlist explicito: ignora tudo por padrao e libera apenas o que e versionado.
+# Explicit allowlist: ignore everything by default, track only what is listed.
 *
 !*/
 
@@ -14,7 +14,7 @@
 !CLAUDE.md
 !AGENTS.md
 
-# Nunca versionar, mesmo dentro de pastas liberadas
+# Never track, even inside allowed folders
 *.zip
 *.local.*
 .env

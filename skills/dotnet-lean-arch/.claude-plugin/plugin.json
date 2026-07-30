@@ -1,7 +1,7 @@
 {
   "name": "dotnet-lean-arch",
   "version": "1.0.0",
-  "description": "Blueprint pragmatico de Clean Architecture para backends .NET: 4 camadas, sem MediatR, Result pattern, EF Core, Aspire, Serilog/OpenTelemetry.",
+  "description": "Pragmatic Clean Architecture blueprint for .NET backends: 4 layers, no MediatR, Result pattern, EF Core, Aspire, Serilog/OpenTelemetry.",
   "author": {
     "name": "Joao Brambilla",
     "email": "jotabram@gmail.com"

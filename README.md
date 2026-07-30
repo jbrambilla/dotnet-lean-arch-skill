@@ -1,20 +1,20 @@
 # dotnet-lean-arch
 
-> Clean Architecture pragmatica para backends .NET. Sem overkill.
+> Pragmatic Clean Architecture for .NET backends. No overkill.
 
-Skill que ensina agentes de codigo a construir backends .NET consistentes e
-testaveis. Sem ela, o agente oscila entre dois extremos: despeja a logica toda no
-endpoint, ou aplica Clean Architecture dogmatica, cheia de abstracao desnecessaria
-(MediatR, repositorios genericos, camadas que so repassam chamada). A skill fixa o
-meio-termo pragmatico: 4 camadas com dependencias apontando para dentro, Result
-pattern no fluxo de negocio, validacao em dois niveis, EF Core, Aspire e
-observabilidade, tudo com o minimo de dependencias externas. O mesmo padrao
-previsivel do scaffold inicial ao enesimo endpoint.
+A skill that teaches coding agents to build consistent, testable .NET backends.
+Without it, agents swing between two extremes: dumping all the logic into the
+endpoint, or applying dogmatic Clean Architecture full of unnecessary abstraction
+(MediatR, generic repositories, layers that just forward calls). The skill locks in
+the pragmatic middle ground: 4 layers with dependencies pointing inward, Result
+pattern for business flow, two-level validation, EF Core, Aspire and
+observability, all with minimal external dependencies. The same predictable
+pattern from the initial scaffold to the nth endpoint.
 
-Funciona em Claude Code, claude.ai, Codex, Copilot, Cursor, Gemini CLI, OpenCode e
-qualquer agente que leia o formato [SKILL.md](https://agentskills.io).
+Works with Claude Code, claude.ai, Codex, Copilot, Cursor, Gemini CLI, OpenCode and
+any agent that reads the [SKILL.md](https://agentskills.io) format.
 
-## Instalação
+## Installation
 
 **Claude Code (marketplace):**
 
@@ -23,43 +23,43 @@ qualquer agente que leia o formato [SKILL.md](https://agentskills.io).
 /plugin install dotnet-lean-arch@jbrambilla
 ```
 
-**Qualquer agente (Codex, Copilot, Cursor, Gemini CLI, OpenCode...):**
+**Any agent (Codex, Copilot, Cursor, Gemini CLI, OpenCode...):**
 
 ```bash
 git clone https://github.com/jbrambilla/dotnet-lean-arch-skill.git
 ln -s "$(pwd)/dotnet-lean-arch-skill/skills/dotnet-lean-arch" ~/.agents/skills/dotnet-lean-arch
 ```
 
-`~/.agents/skills/` e a convencao universal; Claude Code usa `~/.claude/skills/`.
-No Windows sem Developer Mode, copie a pasta em vez de linkar. `git pull` no clone
-atualiza a skill (symlink aponta para o working tree).
+`~/.agents/skills/` is the universal convention; Claude Code uses `~/.claude/skills/`.
+On Windows without Developer Mode, copy the folder instead of symlinking. `git pull`
+in the clone updates the skill (the symlink points to the working tree).
 
-**claude.ai:** baixe o ZIP da ultima [Release](https://github.com/jbrambilla/dotnet-lean-arch-skill/releases)
-e envie em Settings > Capabilities > Skills > Upload skill.
+**claude.ai:** download the ZIP from the latest [Release](https://github.com/jbrambilla/dotnet-lean-arch-skill/releases)
+and upload it under Settings > Capabilities > Skills > Upload skill.
 
-## Uso
+## Usage
 
-Peca um backend .NET em linguagem natural — "cria uma API .NET do zero para gestao
-de pedidos" — e a skill dispara sozinha. Gatilhos e escopo vivem na `description`
-do [SKILL.md](skills/dotnet-lean-arch/SKILL.md).
+Ask for a .NET backend in natural language ("create a .NET API from scratch for
+order management") and the skill triggers on its own. Triggers and scope live in
+the `description` of [SKILL.md](skills/dotnet-lean-arch/SKILL.md).
 
-## Estrutura
+## Structure
 
 ```
 skills/dotnet-lean-arch/
-├── SKILL.md          # instrucoes principais + description de disparo
-└── references/       # 17 referencias: camadas, result pattern, validacao,
-                      # testes, observabilidade, auth, background jobs...
+├── SKILL.md          # main instructions + triggering description
+└── references/       # 17 references: layers, result pattern, validation,
+                      # testing, observability, auth, background jobs...
 ```
 
-Indice completo em [references/index.md](skills/dotnet-lean-arch/references/index.md).
+Full index at [references/index.md](skills/dotnet-lean-arch/references/index.md).
 
-## Contribuindo
+## Contributing
 
-Toda mudanca via PR com CI verde; commits seguem
-[Conventional Commits](https://www.conventionalcommits.org). Regras de
-versionamento e manutencao: [AGENTS.md](AGENTS.md) e [CHANGELOG](CHANGELOG.md).
+Every change goes through a PR with green CI; commits follow
+[Conventional Commits](https://www.conventionalcommits.org). Versioning and
+maintenance rules: [AGENTS.md](AGENTS.md) and [CHANGELOG](CHANGELOG.md).
 
-## Licenca
+## License
 
 [MIT](LICENSE)

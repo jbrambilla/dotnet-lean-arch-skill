@@ -5,13 +5,13 @@
     "email": "jotabram@gmail.com"
   },
   "metadata": {
-    "description": "Skills para Claude Code de Joao Brambilla."
+    "description": "Claude Code skills by Joao Brambilla."
   },
   "plugins": [
     {
       "name": "dotnet-lean-arch",
       "source": "./skills/dotnet-lean-arch",
-      "description": "Blueprint pragmatico de Clean Architecture para backends .NET: 4 camadas, sem MediatR, Result pattern, EF Core, Aspire, Serilog/OpenTelemetry.",
+      "description": "Pragmatic Clean Architecture blueprint for .NET backends: 4 layers, no MediatR, Result pattern, EF Core, Aspire, Serilog/OpenTelemetry.",
       "version": "1.0.0",
       "author": {
         "name": "Joao Brambilla",

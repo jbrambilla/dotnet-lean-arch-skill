@@ -1,64 +1,75 @@
-# Casos de avaliacao — dotnet-lean-arch
+# Evaluation cases — dotnet-lean-arch
 
-Casos para testar o disparo da skill. Rode cada prompt em sessao nova com a skill
-instalada e confira o comportamento esperado. Mudou a `description`? Rode todos de novo.
+Cases to test skill triggering. Run each prompt in a fresh session with the skill
+installed and check the expected behavior. Changed the `description`? Run them all again.
 
-## Devem DISPARAR a skill
+## MUST trigger the skill
 
-### Caso 1 — criacao explicita de API
+### Case 1 — explicit API creation
+
+- **Prompt**: "Create a .NET API from scratch for order management, with Postgres."
+- **Expected**: skill loads; agent reads index and layers before coding; scaffold with
+  4 layers, CPM, Result/Error in Domain, IApplicationDbContext, first IEndpoint.
+
+### Case 2 — Clean Architecture term
+
+- **Prompt**: "Set up a new C# backend following Clean Architecture."
+- **Expected**: skill loads; applies the pragmatic variant of the blueprint (no MediatR,
+  no generic repositories), not the classic/dogmatic version.
+
+### Case 3 — new endpoint in an existing project
+
+- **Prompt**: "Add an order cancellation endpoint to this API."
+- **Expected**: skill loads; follows `references/how-to-add-endpoint.md`;
+  IEndpoint with explicit authorization, calling a UseCase, no logic in the endpoint.
+
+### Case 4 — new use case
+
+- **Prompt**: "I need a UseCase for importing invoices, with validation."
+- **Expected**: skill loads; follows `references/how-to-add-usecase.md`; UseCase,
+  Validator, Request and Response in the same file; returns via Result.
+
+### Case 5 — scaffolding with the stack named
+
+- **Prompt**: "Scaffold a .NET 10 solution with EF Core and Aspire."
+- **Expected**: skill loads; folder structure from the checklist (aspire/, src/, tests/),
+  Directory.Build.props and Directory.Packages.props with CPM.
+
+### Case 6 — layer organization question
+
+- **Prompt**: "How should I organize the Domain, Application, Infra and Api layers of this service?"
+- **Expected**: skill loads; answer based on the blueprint's dependency flow
+  (Domain with no references; Api references Application + Infra), citing the references.
+
+### Case 7 — cross-language triggering (pt-BR)
 
 - **Prompt**: "Cria uma API em .NET do zero para gestao de pedidos, com Postgres."
-- **Esperado**: skill carrega; agente le index e camadas antes de codar; scaffold com
-  4 camadas, CPM, Result/Error no Domain, IApplicationDbContext, primeiro IEndpoint.
+- **Expected**: same as case 1 — the skill must trigger for prompts in Portuguese
+  even though the `description` is in English.
 
-### Caso 2 — termo Clean Architecture
-
-- **Prompt**: "Monta um backend C# novo seguindo Clean Architecture."
-- **Esperado**: skill carrega; aplica a variante pragmatica do blueprint (sem MediatR,
-  sem repositorios genericos), nao a versao classica/dogmatica.
-
-### Caso 3 — novo endpoint em projeto existente
-
-- **Prompt**: "Adiciona um endpoint de cancelamento de pedido nessa API."
-- **Esperado**: skill carrega; segue `references/como-adicionar-endpoint.md`;
-  endpoint IEndpoint com autorizacao explicita, chamando UseCase, sem logica no endpoint.
-
-### Caso 4 — novo usecase
+### Case 8 — cross-language triggering (pt-BR)
 
 - **Prompt**: "Preciso de um UseCase de importacao de notas fiscais com validacao."
-- **Esperado**: skill carrega; segue `references/como-adicionar-usecase.md`; UseCase,
-  Validator, Request e Response no mesmo arquivo; retorno via Result.
+- **Expected**: same as case 4 — cross-language triggering for a use-case request.
 
-### Caso 5 — scaffolding com stack citada
+## Must NOT trigger the skill
 
-- **Prompt**: "Faz o scaffolding de uma solucao .NET 10 com EF Core e Aspire."
-- **Esperado**: skill carrega; estrutura de pastas do checklist (aspire/, src/, tests/),
-  Directory.Build.props e Directory.Packages.props com CPM.
+### Case 9 — .NET, but not a backend/API
 
-### Caso 6 — pergunta de organizacao de camadas
+- **Prompt**: "Create a .NET console app that converts CSV to JSON."
+- **Expected**: skill does NOT load; agent solves it directly, no layers, no scaffold.
 
-- **Prompt**: "Como devo organizar as camadas Domain, Application, Infra e Api deste servico?"
-- **Esperado**: skill carrega; resposta baseada no fluxo de dependencias do blueprint
-  (Domain sem referencias; Api referencia Application + Infra), citando as references.
+### Case 10 — API, but the stack is not .NET
 
-## NAO devem disparar a skill
+- **Prompt**: "Create a REST API in Node with Express and Prisma."
+- **Expected**: skill does NOT load; plain Node/Express solution.
 
-### Caso 7 — .NET, mas nao e backend/API
+### Case 11 — conceptual question, nothing being built
 
-- **Prompt**: "Cria um console app em .NET que converte CSV para JSON."
-- **Esperado**: skill NAO carrega; agente resolve direto, sem camadas nem scaffold.
+- **Prompt**: "What is Clean Architecture and what are its pros and cons?"
+- **Expected**: skill does NOT load; generic theoretical answer, without imposing the blueprint.
 
-### Caso 8 — API, mas stack nao e .NET
+### Case 12 — maintenance on an existing API, no new endpoint/usecase
 
-- **Prompt**: "Cria uma API REST em Node com Express e Prisma."
-- **Esperado**: skill NAO carrega; solucao Node/Express comum.
-
-### Caso 9 — pergunta conceitual, nada sendo construido
-
-- **Prompt**: "O que e Clean Architecture e quais os pros e contras?"
-- **Esperado**: skill NAO carrega; resposta teorica generica, sem impor o blueprint.
-
-### Caso 10 — manutencao em API existente, sem novo endpoint/usecase
-
-- **Prompt**: "Corrige o null reference no UsersController dessa API."
-- **Esperado**: skill NAO carrega; bugfix pontual respeitando o codigo existente.
+- **Prompt**: "Fix the null reference in this API's UsersController."
+- **Expected**: skill does NOT load; targeted bugfix respecting the existing code.

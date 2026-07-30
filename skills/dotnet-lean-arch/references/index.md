@@ -1,103 +1,105 @@
 ---
-tags: [arquitetura, dotnet, moc, blueprint]
-aliases: [MOC Arquitetura, Mapa do Vault]
+tags: [architecture, dotnet, moc, blueprint]
+aliases: [Architecture MOC, Vault Map]
 ---
-# 🗺️ Blueprint de Arquitetura .NET
+# 🗺️ .NET Architecture Blueprint
 
-> Mapa central (MOC) deste vault. Documenta um **padrão arquitetural agnóstico**
-> para qualquer backend .NET. Copie esta pasta para o esqueleto de novos projetos.
+> Central map (MOC) of this vault. Documents an **agnostic architectural pattern**
+> for any .NET backend. Copy this folder into the skeleton of new projects.
 
-> 🤖 **Agente de IA?** Comece pelo [AGENTS](../SKILL.md) (como atuar); volte aqui para navegar.
-> 🌐 **Endpoints da API:** API (índice da superfície HTTP — o *que* a app expõe).
+> 🤖 **AI agent?** Start with [AGENTS](../SKILL.md) (how to act); come back here to navigate.
+> 🌐 **API endpoints:** API (index of the HTTP surface — *what* the app exposes).
 
-## Filosofia
+## Philosophy
 
-Arquitetura **pragmática**, focada em clareza e manutenibilidade — sem
-sofisticação desnecessária. Os pilares:
+**Pragmatic** architecture, focused on clarity and maintainability — no
+unnecessary sophistication. The pillars:
 
-- **Clean Architecture em 4 camadas** — dependências sempre apontam para dentro.
-- **Sem MediatR** — casos de uso são classes [UseCase](camada-application.md)
-  simples injetadas por DI. Menos cerimônia, menos indireção.
-- **[Result pattern](result-pattern.md)** — fluxo de negócio é controlado por
-  `Result<T>`/`Error`, **nunca** por exceções.
-- **[Validação em dois níveis](validacao-dois-niveis.md)** — FluentValidation para
-  formato/entrada; `DomainException` para invariantes de domínio.
-- **[Configuração tipada](configuracao-tipada.md)** — `Options` com DataAnnotations
-  e `ValidateOnStart()`: a aplicação falha no boot se a config estiver inválida.
-- **[Endpoints auto-registrados](camada-api.md)** — cada rota é uma classe
-  `IEndpoint` descoberta por varredura de assembly. Zero registro manual de rota.
+- **Clean Architecture in 4 layers** — dependencies always point inward.
+- **No MediatR** — use cases are simple [UseCase](application-layer.md) classes
+  injected via DI. Less ceremony, less indirection.
+- **[Result pattern](result-pattern.md)** — business flow is controlled by
+  `Result<T>`/`Error`, **never** by exceptions.
+- **[Two-level validation](two-level-validation.md)** — FluentValidation for
+  format/input; `DomainException` for domain invariants.
+- **[Typed configuration](typed-configuration.md)** — `Options` with DataAnnotations
+  and `ValidateOnStart()`: the application fails at boot if the config is invalid.
+- **[Self-registered endpoints](api-layer.md)** — each route is an `IEndpoint`
+  class discovered via assembly scanning. Zero manual route registration.
 
-## Fluxo de dependências
+## Dependency flow
 
 ```
         ┌─────────────────────────────────────────┐
         │                   Api                    │  Minimal API, IEndpoint,
-        │         (composição da raiz)             │  ExceptionHandler
+        │           (composition root)             │  ExceptionHandler
         └───────────────┬─────────────────────────┘
-                        │ depende de
+                        │ depends on
                         ▼
         ┌─────────────────────────────────────────┐
         │              Application                 │  UseCases, Validators,
-        │   (IApplicationDbContext, Options)       │  abstrações
+        │   (IApplicationDbContext, Options)       │  abstractions
         └───────────────┬─────────────────────────┘
-                        │ depende de
+                        │ depends on
                         ▼
         ┌─────────────────────────────────────────┐
         │                Domain                    │  Entities, Value Objects,
-        │        (sem dependências externas)       │  Result/Error, Entity base
+        │       (no external dependencies)         │  Result/Error, Entity base
         └─────────────────────────────────────────┘
                         ▲
-                        │ implementa abstrações de Application
-                        │ e depende de Domain
+                        │ implements Application abstractions
+                        │ and depends on Domain
         ┌───────────────┴─────────────────────────┐
-        │                 Infra                    │  EF Core, persistência,
-        │   (implementa IApplicationDbContext)     │  serviços externos
+        │                 Infra                    │  EF Core, persistence,
+        │   (implements IApplicationDbContext)     │  external services
         └─────────────────────────────────────────┘
 ```
 
-**Regra de ouro das dependências:**
+**Golden rule of dependencies:**
 - `Api → Application → Domain`
-- `Infra → Application` (implementa abstrações) `+ Infra → Domain`
-- `Domain` **não referencia nada**.
-- A `Api` compõe a raiz: referencia `Application` e `Infra` para montar o DI.
+- `Infra → Application` (implements abstractions) `+ Infra → Domain`
+- `Domain` **references nothing**.
+- The `Api` is the composition root: it references `Application` and `Infra` to wire up DI.
 
-## Navegação
+## Navigation
 
-> A pasta de cada nota indica sua natureza: `camadas/`, `padroes/`, `praticas/`,
-> `referencia/`, `guias/`. (Wikilinks resolvem por nome, independente da pasta.)
+> Each note's folder indicates its nature: `layers/`, `patterns/`, `practices/`,
+> `reference/`, `guides/`. (Wikilinks resolve by name, regardless of folder.)
 
-### 🧱 Camadas (`camadas/`)
-- [camada-domain](camada-domain.md) — entidades, value objects, `Entity` base, `Result`/`Error`.
-- [camada-application](camada-application.md) — UseCases, validators, `IApplicationDbContext`, options.
-- [camada-infra](camada-infra.md) — EF Core, configurações, migrations, serviços externos.
-- [camada-api](camada-api.md) — Minimal API, `IEndpoint`, exception handling.
+### 🧱 Layers (`layers/`)
+- [domain-layer](domain-layer.md) — entities, value objects, `Entity` base, `Result`/`Error`.
+- [application-layer](application-layer.md) — UseCases, validators, `IApplicationDbContext`, options.
+- [infra-layer](infra-layer.md) — EF Core, configurations, migrations, external services.
+- [api-layer](api-layer.md) — Minimal API, `IEndpoint`, exception handling.
 
-### 🎯 Padrões de arquitetura (`padroes/`)
-- [result-pattern](result-pattern.md) — controle de fluxo sem exceções.
-- [validacao-dois-niveis](validacao-dois-niveis.md) — FluentValidation vs DomainException.
-- [configuracao-tipada](configuracao-tipada.md) — Options validadas no boot.
+### 🎯 Architecture patterns (`patterns/`)
+- [result-pattern](result-pattern.md) — flow control without exceptions.
+- [two-level-validation](two-level-validation.md) — FluentValidation vs DomainException.
+- [typed-configuration](typed-configuration.md) — Options validated at boot.
 
-### 🛠️ Práticas transversais (`praticas/`)
-- [logging-observabilidade](logging-observabilidade.md) — Serilog via appsettings, OTLP + fallback em arquivo.
-- [estrategia-de-testes](estrategia-de-testes.md) — unitário de domínio + integração de UseCase com TestContainers.
-- [integracao-servico-externo](integracao-servico-externo.md) — Refit + ACL + resiliência + TokenManager para APIs externas.
-- [autenticacao-e-seguranca](autenticacao-e-seguranca.md) — API Key (autorização explícita por endpoint) + panorama (JWT, EF Identity).
-- [processamento-em-segundo-plano](processamento-em-segundo-plano.md) — background jobs com Hangfire (Job ≠ UseCase).
+### 🛠️ Cross-cutting practices (`practices/`)
+- [logging-observability](logging-observability.md) — Serilog via appsettings, OTLP + file fallback.
+- [testing-strategy](testing-strategy.md) — domain unit tests + UseCase integration tests with TestContainers.
+- [external-service-integration](external-service-integration.md) — Refit + ACL + resilience + TokenManager for external APIs.
+- [authentication-and-security](authentication-and-security.md) — API Key (explicit per-endpoint authorization) + overview (JWT, EF Identity).
+- [background-processing](background-processing.md) — background jobs with Hangfire (Job ≠ UseCase).
 
-### 📚 Referência (`referencia/`)
-- [stack-e-dependencias](stack-e-dependencias.md) — packages-base e como manter versões/sintaxe atuais (Context7 / MS Learn).
-- [convencoes-e-nomenclatura](convencoes-e-nomenclatura.md) — nota-cola: sufixos, estrutura de pastas, rotas, visibilidade.
+### 📚 Reference (`reference/`)
+- [stack-and-dependencies](stack-and-dependencies.md) — base packages and how to keep versions/syntax current (Context7 / MS Learn).
+- [conventions-and-naming](conventions-and-naming.md) — cheat sheet: suffixes, folder structure, routes, visibility.
 
-### 📘 Guias acionáveis (`guias/`)
-- [como-adicionar-endpoint](como-adicionar-endpoint.md) — adicionar uma rota nova do zero.
-- [como-adicionar-usecase](como-adicionar-usecase.md) — adicionar um caso de uso novo do zero.
+### 📘 Actionable guides (`guides/`)
+- [how-to-add-endpoint](how-to-add-endpoint.md) — add a new route from scratch.
+- [how-to-add-usecase](how-to-add-usecase.md) — add a new use case from scratch.
 
-### 🤖 Para agentes
-- [AGENTS](../SKILL.md) — ponto de entrada: como atuar, ordem de implementação e checklist de scaffolding.
+### 🤖 For agents
+- [AGENTS](../SKILL.md) — entry point: how to act, implementation order, and scaffolding checklist.
 
-## Convenções gerais
+## General conventions
 
-- **Idioma:** domínio, classes, mensagens e logs em **português**.
-- **Pacotes:** versões centralizadas (Central Package Management).
-- **Defaults globais:** `TargetFramework`, `Nullable`, `ImplicitUsings` em
-  `Directory.Build.props` — nunca redefinir por projeto.
+- **Language:** domain, classes, messages, and logs in the **team's ubiquitous
+  language** (this skill's examples use English; follow the user's/codebase's
+  language when it differs). See [conventions-and-naming](conventions-and-naming.md).
+- **Packages:** centralized versions (Central Package Management).
+- **Global defaults:** `TargetFramework`, `Nullable`, `ImplicitUsings` in
+  `Directory.Build.props` — never redefine per project.

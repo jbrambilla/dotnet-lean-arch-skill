@@ -1,29 +1,29 @@
 ---
-tags: [arquitetura, dotnet, camada, api, minimal-api, endpoint]
-aliases: [Api, Camada de API, Apresentação]
+tags: [architecture, dotnet, layer, api, minimal-api, endpoint]
+aliases: [Api, API Layer, Presentation]
 ---
 
-# 🟥 Camada Api
+# 🟥 Api Layer
 
-> Entrada HTTP via **Minimal API** e **composição da raiz** (monta o DI de todas
-> as camadas). Endpoints são auto-registrados via [Padrão `IEndpoint`](#padrão-iendpoint).
+> HTTP entry point via **Minimal API** and **composition root** (wires up the DI of all
+> layers). Endpoints are auto-registered via the [`IEndpoint` pattern](#iendpoint-pattern).
 
-Ver também: [index](index.md) · [como-adicionar-endpoint](como-adicionar-endpoint.md) · [result-pattern](result-pattern.md) · [logging-observabilidade](logging-observabilidade.md)
+See also: [index](index.md) · [how-to-add-endpoint](how-to-add-endpoint.md) · [result-pattern](result-pattern.md) · [logging-observability](logging-observability.md)
 
-## Padrões e práticas aplicados aqui
+## Patterns and practices applied here
 
-- [result-pattern](result-pattern.md) — o endpoint traduz `Result` em resposta HTTP via `.Problem()` (`ResultExtensions`).
-- [logging-observabilidade](logging-observabilidade.md) — o `Program.cs` (Serilog + try/catch) e o `GlobalExceptionHandler` são desta camada.
-- [convencoes-e-nomenclatura](convencoes-e-nomenclatura.md) — convenção de rotas (`api/v{n}/<recurso>`), tags e visibilidade dos endpoints.
-- [autenticacao-e-seguranca](autenticacao-e-seguranca.md) — autenticação (API Key) e autorização explícita por endpoint vivem nesta camada.
+- [result-pattern](result-pattern.md) — the endpoint translates `Result` into an HTTP response via `.Problem()` (`ResultExtensions`).
+- [logging-observability](logging-observability.md) — the `Program.cs` (Serilog + try/catch) and the `GlobalExceptionHandler` belong to this layer.
+- [conventions-and-naming](conventions-and-naming.md) — route convention (`api/v{n}/<resource>`), tags, and endpoint visibility.
+- [authentication-and-security](authentication-and-security.md) — authentication (API Key) and explicit per-endpoint authorization live in this layer.
 
-## Padrão `IEndpoint`
+## `IEndpoint` pattern
 
-Cada rota é uma classe `internal sealed` que implementa `IEndpoint`. Um
-extension method varre o assembly e registra/mapeia todas — **zero registro
-manual de rota**.
+Each route is an `internal sealed` class that implements `IEndpoint`. An
+extension method scans the assembly and registers/maps them all — **zero manual
+route registration**.
 
-### A interface
+### The interface
 
 ```csharp
 namespace Blueprint.Api.Endpoints;
@@ -34,7 +34,7 @@ public interface IEndpoint
 }
 ```
 
-### Um endpoint concreto
+### A concrete endpoint
 
 ```csharp
 using Blueprint.Api.Extensions;
@@ -42,32 +42,32 @@ using Blueprint.Application.Features.Widgets;
 
 namespace Blueprint.Api.Endpoints.Widgets;
 
-internal sealed class CriarWidget : IEndpoint
+internal sealed class CreateWidget : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost("api/v1/widgets",
-            async (CriarWidgetRequest request,
-                   CriarWidgetUseCase useCase,
+            async (CreateWidgetRequest request,
+                   CreateWidgetUseCase useCase,
                    CancellationToken cancellationToken) =>
         {
             var response = await useCase.Execute(request, cancellationToken);
 
             if (response.IsFailure)
-                return response.Problem(); // mapeia Error -> ProblemDetails
+                return response.Problem(); // maps Error -> ProblemDetails
 
             return Results.Ok(response.Value);
         })
-        .Produces<CriarWidgetResponse>(StatusCodes.Status200OK)
+        .Produces<CreateWidgetResponse>(StatusCodes.Status200OK)
         .WithTags(Tags.Widgets);
     }
 }
 ```
 
-> O endpoint é **fino**: recebe a request, chama o UseCase, traduz o
-> [Result](result-pattern.md) em resposta HTTP. Sem lógica de negócio aqui.
+> The endpoint is **thin**: it receives the request, calls the UseCase, and translates the
+> [Result](result-pattern.md) into an HTTP response. No business logic here.
 
-### Varredura e mapeamento (`EndpointExtensions`)
+### Scanning and mapping (`EndpointExtensions`)
 
 ```csharp
 using System.Reflection;
@@ -108,7 +108,7 @@ public static class EndpointExtensions
 
 ### Tags
 
-Constantes centralizadas para agrupar rotas no OpenAPI:
+Centralized constants to group routes in OpenAPI:
 
 ```csharp
 namespace Blueprint.Api.Endpoints;
@@ -119,10 +119,10 @@ public static class Tags
 }
 ```
 
-## Tradução `Result` → HTTP (`ResultExtensions`)
+## `Result` → HTTP translation (`ResultExtensions`)
 
-Centraliza o mapeamento de `ErrorType` para status HTTP via ProblemDetails.
-Ver [result-pattern](result-pattern.md).
+Centralizes the mapping from `ErrorType` to HTTP status via ProblemDetails.
+See [result-pattern](result-pattern.md).
 
 ```csharp
 using Blueprint.Domain.Shared;
@@ -136,18 +136,18 @@ public static class ResultExtensions
 
     private static Error Guard(Error? error)
         => error ?? throw new InvalidOperationException(
-            "Não é possível retornar problema para um resultado de sucesso.");
+            "Cannot return a problem for a success result.");
 
     private static IResult GetProblem(Error error)
     {
         if (error.Type == ErrorType.Validation)
             return Results.Problem(
-                detail: error.Mensagem,
+                detail: error.Message,
                 statusCode: StatusCodes.Status400BadRequest,
                 extensions: new Dictionary<string, object?> { ["errors"] = error.ValidationErrors });
 
         return Results.Problem(
-            detail: error.Mensagem,
+            detail: error.Message,
             statusCode: error.Type switch
             {
                 ErrorType.NotFound => StatusCodes.Status404NotFound,
@@ -160,9 +160,9 @@ public static class ResultExtensions
 
 ## GlobalExceptionHandler
 
-Rede de segurança para exceções **não previstas** (bugs, falhas de infra). Fluxo
-de negócio esperado **não** passa por aqui — usa Result. Devolve um 500 genérico
-sem vazar detalhes internos.
+Safety net for **unexpected** exceptions (bugs, infrastructure failures). Expected
+business flow does **not** go through here — it uses Result. Returns a generic 500
+without leaking internal details.
 
 ```csharp
 using Microsoft.AspNetCore.Diagnostics;
@@ -177,15 +177,15 @@ internal sealed class GlobalExceptionHandler(
     public async ValueTask<bool> TryHandleAsync(
         HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
-        logger.LogError(exception, "Ocorreu um erro interno no servidor.");
+        logger.LogError(exception, "An internal server error occurred.");
 
         httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
 
         var problem = new ProblemDetails
         {
             Status = StatusCodes.Status500InternalServerError,
-            Title = "Erro Interno do Servidor",
-            Detail = "Ocorreu um erro inesperado. Tente novamente mais tarde."
+            Title = "Internal Server Error",
+            Detail = "An unexpected error occurred. Please try again later."
         };
 
         return await problemDetailsService.TryWriteAsync(new ProblemDetailsContext
@@ -197,7 +197,7 @@ internal sealed class GlobalExceptionHandler(
 }
 ```
 
-Registro do handler (extension):
+Handler registration (extension):
 
 ```csharp
 public static IServiceCollection AddExceptionHandlers(this IServiceCollection services)
@@ -208,15 +208,15 @@ public static IServiceCollection AddExceptionHandlers(this IServiceCollection se
 }
 ```
 
-## Composição da raiz (`Program.cs`)
+## Composition root (`Program.cs`)
 
-A Api junta tudo: ServiceDefaults, OpenAPI, exception handlers, e o DI de cada
-camada (`AddApplication`, `AddInfrastructure`), além de varrer os endpoints.
+The Api brings everything together: ServiceDefaults, OpenAPI, exception handlers, and
+each layer's DI (`AddApplication`, `AddInfrastructure`), plus endpoint scanning.
 
-> O `Program.cs` em produção é envolto em **try/catch/finally** com bootstrap
-> logger do Serilog (falha de boot vira `Fatal`, `CloseAndFlush` no `finally`) e
-> `UseSerilogRequestLogging`. O esqueleto abaixo é simplificado — o padrão
-> completo de logging/observabilidade está em [logging-observabilidade](logging-observabilidade.md).
+> The production `Program.cs` is wrapped in **try/catch/finally** with Serilog's
+> bootstrap logger (a boot failure becomes `Fatal`, `CloseAndFlush` in the `finally`) and
+> `UseSerilogRequestLogging`. The skeleton below is simplified — the complete
+> logging/observability pattern is in [logging-observability](logging-observability.md).
 
 ```csharp
 using System.Reflection;
@@ -226,7 +226,7 @@ using Blueprint.Infra;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddServiceDefaults();            // OTel, health checks, resiliência (ver bootstrap)
+builder.AddServiceDefaults();            // OTel, health checks, resilience (see bootstrap)
 builder.Services.AddOpenApi();
 builder.Services.AddExceptionHandlers();
 
@@ -243,18 +243,18 @@ app.UseExceptionHandler();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    // (opcional) aplicar migrations no startup em dev
+    // (optional) apply migrations at startup in dev
 }
 
 app.UseHttpsRedirection();
 app.MapDefaultEndpoints();   // /health, /alive
-app.MapEndpoints();          // varredura de IEndpoint
+app.MapEndpoints();          // IEndpoint scanning
 
 app.Run();
 ```
 
-## Princípios
+## Principles
 
-- **Endpoints finos:** request → UseCase → tradução de Result. Nada mais.
-- **Auto-registro:** novo `IEndpoint` ⇒ nenhuma mudança no `Program.cs`.
-- **Erros previstos via Result/`.Problem()`; imprevistos via GlobalExceptionHandler.**
+- **Thin endpoints:** request → UseCase → Result translation. Nothing else.
+- **Auto-registration:** a new `IEndpoint` ⇒ no changes to `Program.cs`.
+- **Expected errors via Result/`.Problem()`; unexpected ones via GlobalExceptionHandler.**

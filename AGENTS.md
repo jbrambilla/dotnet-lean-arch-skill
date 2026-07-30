@@ -1,71 +1,71 @@
 # AGENTS.md
 
-Guia de manutencao para agentes de codigo (Claude Code, Codex, Cursor, Gemini CLI
-etc.) trabalhando neste repositorio. Claude Code le este arquivo via import no
+Maintenance guide for coding agents (Claude Code, Codex, Cursor, Gemini CLI,
+etc.) working in this repository. Claude Code reads this file via the import in
 `CLAUDE.md`.
 
-## O que este repositorio e
+## What this repository is
 
-Repositorio de UMA Agent Skill (`dotnet-lean-arch`) — nao ha codigo de aplicacao.
-Todo o conteudo e markdown + manifestos JSON. "Buildar" e "testar" significam
-validar integridade e rodar os casos de disparo.
+Repository of ONE Agent Skill (`dotnet-lean-arch`) — there is no application code.
+All content is markdown + JSON manifests. "Building" and "testing" mean validating
+integrity and running the trigger cases.
 
-A skill tem identidade dupla a partir da mesma pasta:
+The skill has a dual identity from the same folder:
 
-- **Agent Skill (padrao aberto)**: `skills/dotnet-lean-arch/` e autocontida —
-  qualquer agente compativel le `SKILL.md` + `references/`.
-- **Plugin do Claude Code**: `skills/dotnet-lean-arch/.claude-plugin/plugin.json`
-  (manifesto do plugin) + `.claude-plugin/marketplace.json` na raiz (catalogo).
-  As demais ferramentas ignoram essas pastas.
+- **Agent Skill (open standard)**: `skills/dotnet-lean-arch/` is self-contained —
+  any compatible agent reads `SKILL.md` + `references/`.
+- **Claude Code plugin**: `skills/dotnet-lean-arch/.claude-plugin/plugin.json`
+  (plugin manifest) + `.claude-plugin/marketplace.json` at the root (catalog).
+  Other tools ignore these folders.
 
-## Comando principal
+## Main command
 
 ```bash
 bash scripts/validate.sh
 ```
 
-Unico comando do repo. CI (`.github/workflows/validate.yml`) roda ele em todo
-push/PR. Checa: frontmatter obrigatorio, `description` <= 250 chars, SKILL.md
-<= 500 linhas, versao sincronizada nos 3 manifestos, ausencia de caminhos
-absolutos e de credenciais. Rode SEMPRE antes de commitar.
+The repo's only command. CI (`.github/workflows/validate.yml`) runs it on every
+push/PR. It checks: required frontmatter, `description` <= 250 chars, SKILL.md
+<= 500 lines, version in sync across the 3 manifests, no absolute paths and no
+credentials. ALWAYS run it before committing.
 
-## Arquitetura do conteudo
+## Content architecture
 
-- `skills/dotnet-lean-arch/SKILL.md` — ponto de entrada: diz ao agente COMO atuar
-  (ordem de implementacao de dentro pra fora, checklist de scaffolding, definition
-  of done). Nao duplica detalhe tecnico.
-- `skills/dotnet-lean-arch/references/` — 17 arquivos FLAT (sem subpastas), um por
-  camada/padrao/pratica. `index.md` e o mapa de navegacao. Links entre arquivos sao
-  SEMPRE caminhos relativos (`references/camada-domain.md`) — caminho absoluto
-  reprova no validate.
-- `evals/cases.md` — 10 casos manuais de disparo (6 positivos, 4 negativos). Mudou
-  a `description` do SKILL.md? Rode todos de novo em sessao nova.
+- `skills/dotnet-lean-arch/SKILL.md` — entry point: tells the agent HOW to act
+  (inside-out implementation order, scaffolding checklist, definition of done).
+  Does not duplicate technical detail.
+- `skills/dotnet-lean-arch/references/` — 17 FLAT files (no subfolders), one per
+  layer/pattern/practice. `index.md` is the navigation map. Links between files are
+  ALWAYS relative paths (`references/domain-layer.md`) — absolute paths fail
+  validation.
+- `evals/cases.md` — 12 manual trigger cases (8 positive, including 2 in pt-BR for
+  cross-language triggering, and 4 negative). Changed the `description` in
+  SKILL.md? Run them all again in a fresh session.
 
-## Versionamento (regra critica)
+## Versioning (critical rule)
 
-Versao existe em TRES lugares e deve ser identica no mesmo PR (validate falha se
-divergir): frontmatter do `SKILL.md`, `plugin.json` e `marketplace.json`.
+The version exists in THREE places and must be identical within the same PR
+(validation fails if they diverge): `SKILL.md` frontmatter, `plugin.json` and
+`marketplace.json`.
 
-- **MAJOR**: skill passa a produzir estrutura incompativel (camadas, contratos base
-  como `Result`/`IEndpoint`).
-- **MINOR**: qualquer mudanca de comportamento — instrucoes no SKILL.md, arquivos de
-  `references/`, nova pratica. Alterar a `description` e MINOR no minimo (muda o
-  disparo).
-- **PATCH**: typo, formatacao, docs do repo (README, CHANGELOG), CI.
+- **MAJOR**: the skill starts producing incompatible structure (layers, base
+  contracts such as `Result`/`IEndpoint`).
+- **MINOR**: any behavior change — instructions in SKILL.md, files in
+  `references/`, a new practice. Changing the `description` is AT LEAST minor
+  (it changes triggering).
+- **PATCH**: typo, formatting, repo docs (README, CHANGELOG), CI.
 
-Toda mudanca de versao exige entrada no `CHANGELOG.md` (Keep a Changelog, pt-BR).
+Every version change requires an entry in `CHANGELOG.md` (Keep a Changelog).
 
 ## Release
 
-Tag `v<versao>` (ex.: `v1.1.0`) dispara `.github/workflows/release.yml`, que gera o
-ZIP da skill (excluindo `.claude-plugin/`) e anexa na GitHub Release. O ZIP precisa
-ter a pasta `dotnet-lean-arch/` na raiz — e o formato que o claude.ai aceita no
-upload manual.
+Tag `v<version>` (e.g. `v1.1.0`) triggers `.github/workflows/release.yml`, which
+builds the skill ZIP (excluding `.claude-plugin/`) and attaches it to the GitHub
+Release. The ZIP must have the `dotnet-lean-arch/` folder at its root — that is
+the format claude.ai accepts for manual upload.
 
-## Convencoes
+## Conventions
 
-- Commits: [Conventional Commits](https://www.conventionalcommits.org), descricao
-  em pt-BR.
-- Docs do repositorio (README, CHANGELOG, este arquivo): pt-BR sem acentos (ascii).
-  Conteudo da skill (`SKILL.md`, `references/`): pt-BR com acentos.
-- Nunca cite caminhos absolutos ou credenciais em nenhum arquivo — validate reprova.
+- Commits: [Conventional Commits](https://www.conventionalcommits.org), in English.
+- All content (repo docs and skill content) is written in English.
+- Never include absolute paths or credentials in any file — validation fails.
