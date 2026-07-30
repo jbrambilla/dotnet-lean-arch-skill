@@ -3,6 +3,7 @@
 !*/
 
 !.gitignore
+!install.sh
 !LICENSE
 !README.md
 !CHANGELOG.md

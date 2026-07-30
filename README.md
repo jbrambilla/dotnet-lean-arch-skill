@@ -14,25 +14,33 @@ pattern from the initial scaffold to the nth endpoint.
 Works with Claude Code, claude.ai, Codex, Copilot, Cursor, Gemini CLI, OpenCode and
 any agent that reads the [SKILL.md](https://agentskills.io) format.
 
-## Installation
+## Install
 
-**Claude Code (marketplace):**
-
-```
-/plugin marketplace add jbrambilla/dotnet-lean-arch-skill
-/plugin install dotnet-lean-arch@jbrambilla
-```
-
-**Any agent (Codex, Copilot, Cursor, Gemini CLI, OpenCode...):**
+**One command, every agent** — [`npx skills`](https://skills.sh) detects the coding
+agents installed on your machine (Claude Code, Codex, Copilot/VS Code, Cursor,
+Gemini CLI, OpenCode and 70+ more) and installs into each one:
 
 ```bash
-git clone https://github.com/jbrambilla/dotnet-lean-arch-skill.git
-ln -s "$(pwd)/dotnet-lean-arch-skill/skills/dotnet-lean-arch" ~/.agents/skills/dotnet-lean-arch
+npx skills add jbrambilla/dotnet-lean-arch-skill
 ```
 
-`~/.agents/skills/` is the universal convention; Claude Code uses `~/.claude/skills/`.
-On Windows without Developer Mode, copy the folder instead of symlinking. `git pull`
-in the clone updates the skill (the symlink points to the working tree).
+**No Node?** Same result via the bundled installer, which copies the skill to
+`~/.claude/skills/` and `~/.agents/skills/`:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/jbrambilla/dotnet-lean-arch-skill/main/install.sh | bash
+```
+
+Re-run either command to update; `bash -s -- --uninstall` removes it.
+
+**Claude Code as a plugin** (managed updates via `/plugin`):
+
+```bash
+claude plugin marketplace add jbrambilla/dotnet-lean-arch-skill && claude plugin install dotnet-lean-arch@jbrambilla
+```
+
+Or inside a session: `/plugin marketplace add jbrambilla/dotnet-lean-arch-skill`,
+then `/plugin install dotnet-lean-arch@jbrambilla`.
 
 **claude.ai:** download the ZIP from the latest [Release](https://github.com/jbrambilla/dotnet-lean-arch-skill/releases)
 and upload it under Settings > Capabilities > Skills > Upload skill.
