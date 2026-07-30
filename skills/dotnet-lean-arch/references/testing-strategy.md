@@ -81,7 +81,9 @@ With top-level statements, the `Program` class is `internal` and
 public partial class Program;   // required for the WebApplicationFactory
 ```
 
-> Alternative: `<InternalsVisibleTo Include="<Sln>.IntegrationTests" />` in the Api `.csproj`.
+> Alternative: `<InternalsVisibleTo Include="<Sln>.IntegrationTests" />` as an
+> **MSBuild item** in the Api `.csproj` — never a `Properties/AssemblyInfo.cs`.
+> See [conventions-and-naming](conventions-and-naming.md).
 
 ---
 

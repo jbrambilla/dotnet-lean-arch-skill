@@ -78,10 +78,23 @@ src/<Sln>.Api/
 
 - **Endpoints:** `internal sealed` (discovered by scanning, they don't need to be public).
 - **Entities:** `sealed`, `private` setters, parameterless `private` constructor for EF Core.
+  The **only exception** is `CreatedAt`/`UpdatedAt` on the `Entity` base — `internal set`,
+  written solely by Infra. See [domain-layer](domain-layer.md).
 - **Validators:** `sealed`.
 - **Options:** `sealed`.
 - **Assembly-scanned types** (endpoints, validators, configurations) don't need
   to be `public` — scanning uses `DefinedTypes`/`includeInternalTypes`.
+
+### `InternalsVisibleTo`
+
+- Always declare it as an **MSBuild item** in the `.csproj`:
+  `<InternalsVisibleTo Include="<Assembly>" />`.
+- **Never** create `Properties/AssemblyInfo.cs`, and never use the
+  `[assembly: InternalsVisibleTo(...)]` attribute — legacy .NET Framework style.
+- Only two legitimate cases in this blueprint:
+  - `Domain.csproj` → `<Sln>.Infra` (timestamp setters). See [domain-layer](domain-layer.md).
+  - `Api.csproj` → `<Sln>.IntegrationTests` (optional, only if `public partial class Program;`
+    is not used). See [testing-strategy](testing-strategy.md).
 
 ## Namespaces
 
@@ -110,6 +123,8 @@ Follow the folder structure: `<Sln>.<Layer>.<Folder>...`
   in the `Entity` base.
 - **`CreatedAt` / `UpdatedAt`:** filled automatically in
   `SaveChangesAsync` (`internal` setter). Never set them by hand. See [infra-layer](infra-layer.md).
+  Infra gets write access through `<InternalsVisibleTo Include="<Sln>.Infra" />` in
+  `Domain.csproj` — an MSBuild item, never an `AssemblyInfo.cs`.
 
 ## Database
 

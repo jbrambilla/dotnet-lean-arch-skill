@@ -66,6 +66,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
 > The `internal` setter on `CreatedAt`/`UpdatedAt` (see [domain-layer](domain-layer.md)) allows
 > only the Infra layer to write them — the domain does not manipulate them.
+> Access comes from `<InternalsVisibleTo Include="<Sln>.Infra" />` declared in
+> `Domain.csproj` as an MSBuild item — never a `Properties/AssemblyInfo.cs`.
 
 ## Entity configurations
 

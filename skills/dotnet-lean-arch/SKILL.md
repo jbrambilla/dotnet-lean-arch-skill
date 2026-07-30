@@ -1,7 +1,7 @@
 ---
 name: dotnet-lean-arch
 description: "Use when creating a .NET backend/API from scratch or adding endpoints/use cases with pragmatic 4-layer Clean Architecture (.NET 10, no MediatR, Result pattern, EF Core, Aspire). Triggers: Clean Architecture, UseCase, IEndpoint, IApplicationDbContext."
-version: 1.0.0
+version: 1.1.0
 ---
 
 > **This skill is a portable blueprint.** The body below says *how to act*; the
@@ -143,7 +143,9 @@ The order follows the direction of the dependencies — **inside-out**:
 - `Api.csproj` → references `Application` + `Infra` (+ `ServiceDefaults`).
 - `Infra.csproj` → references `Application` (and transitively `Domain`).
 - `Application.csproj` → references `Domain`.
-- `Domain.csproj` → **no** project references.
+- `Domain.csproj` → **no** project references, but declares
+  `<InternalsVisibleTo Include="<Sln>.Infra" />` (MSBuild item in the `.csproj` —
+  **never** a `Properties/AssemblyInfo.cs`). See [conventions-and-naming](references/conventions-and-naming.md).
 
 ### ServiceDefaults (if using orchestration)
 Centralizes OpenTelemetry, health checks (`/health`, `/alive`), service discovery,
@@ -156,6 +158,8 @@ See [logging-observability](references/logging-observability.md).
 - [ ] Solution compiles with the 4 layers and correct dependencies.
 - [ ] CPM active; no `.csproj` pins a package version.
 - [ ] Base `Result`/`Error` and `Entity` exist in Domain.
+- [ ] `Domain.csproj` declares `<InternalsVisibleTo Include="<Sln>.Infra" />`; no
+      project has a `Properties/AssemblyInfo.cs`.
 - [ ] `IApplicationDbContext` defined in Application and implemented in Infra.
 - [ ] At least one `IEndpoint` mapped and responding.
 - [ ] `GlobalExceptionHandler` registered; errors become ProblemDetails.
