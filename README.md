@@ -2,16 +2,19 @@
 
 > Clean Architecture pragmatica para backends .NET. Sem overkill.
 
-Agent Skill ([padrao aberto](https://agentskills.io)) que guia o agente na construcao
-de backends .NET: 4 camadas (Domain, Application, Infra, Api) organizadas em slices,
-sem MediatR, Result pattern, validacao em dois niveis, configuracao tipada, EF Core,
-Aspire e Serilog/OpenTelemetry. Implementacao de dentro para fora, com checklist de
-scaffolding, definition of done e 17 arquivos de referencia.
+Skill que ensina agentes de codigo a construir backends .NET consistentes e
+testaveis. Sem ela, o agente oscila entre dois extremos: despeja a logica toda no
+endpoint, ou aplica Clean Architecture dogmatica, cheia de abstracao desnecessaria
+(MediatR, repositorios genericos, camadas que so repassam chamada). A skill fixa o
+meio-termo pragmatico: 4 camadas com dependencias apontando para dentro, Result
+pattern no fluxo de negocio, validacao em dois niveis, EF Core, Aspire e
+observabilidade, tudo com o minimo de dependencias externas. O mesmo padrao
+previsivel do scaffold inicial ao enesimo endpoint.
 
-Funciona em qualquer agente compativel com Agent Skills: Claude Code, claude.ai,
-OpenAI Codex, GitHub Copilot / VS Code, Cursor, Gemini CLI, OpenCode, entre outros.
+Funciona em Claude Code, claude.ai, Codex, Copilot, Cursor, Gemini CLI, OpenCode e
+qualquer agente que leia o formato [SKILL.md](https://agentskills.io).
 
-## Instalacao
+## Instalação
 
 **Claude Code (marketplace):**
 
