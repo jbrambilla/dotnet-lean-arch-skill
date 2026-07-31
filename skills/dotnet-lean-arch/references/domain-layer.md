@@ -48,6 +48,22 @@ public abstract class Entity
 }
 ```
 
+The `internal` setter only compiles from Infra if that assembly is granted access.
+Declare it as an **MSBuild item in the `.csproj`** — **never** create a
+`Properties/AssemblyInfo.cs` with `[assembly: InternalsVisibleTo(...)]`
+(see [conventions-and-naming](conventions-and-naming.md)):
+
+```xml
+<!-- src/<Sln>.Domain/<Sln>.Domain.csproj -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <InternalsVisibleTo Include="<Sln>.Infra" />
+  </ItemGroup>
+</Project>
+```
+
+> Who writes the timestamps: `SaveChangesAsync`, in [infra-layer](infra-layer.md).
+
 ### `AggregateRoot`
 
 Marks the root of an aggregate (entry point for consistency). It can start

@@ -12,7 +12,7 @@
       "name": "dotnet-lean-arch",
       "source": "./skills/dotnet-lean-arch",
       "description": "Pragmatic Clean Architecture blueprint for .NET backends: 4 layers, no MediatR, Result pattern, EF Core, Aspire, Serilog/OpenTelemetry.",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "author": {
         "name": "Joao Brambilla",
         "email": "jotabram@gmail.com"

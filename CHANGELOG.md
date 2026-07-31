@@ -20,6 +20,26 @@ versioning follows [Semantic Versioning](https://semver.org/).
   (frontmatter), `plugin.json` and `marketplace.json`. `scripts/validate.sh` fails
   if they diverge.
 
+## [1.1.0] - 2026-07-30
+
+### Added
+
+- Explicit `InternalsVisibleTo` rule in `conventions-and-naming.md`: always declare
+  it as an MSBuild item in the `.csproj`, never as a `Properties/AssemblyInfo.cs`
+  with the `[assembly: InternalsVisibleTo(...)]` attribute. Lists the only two
+  legitimate cases (`Domain` → `Infra`, `Api` → `IntegrationTests`).
+- `Domain.csproj` snippet with `<InternalsVisibleTo Include="<Sln>.Infra" />` in
+  `domain-layer.md`, right after the `Entity` base — the layer's `internal` setters
+  now state how the access is granted.
+- Scaffold definition-of-done item in `SKILL.md` covering the `Domain.csproj`
+  declaration and the absence of any `AssemblyInfo.cs`.
+
+### Fixed
+
+- Contradiction between `conventions-and-naming.md` ("Entities: `private` setters")
+  and the `Entity` base (`internal set` on `CreatedAt`/`UpdatedAt`) — the exception
+  is now documented, so the agent no longer improvises the access mechanism.
+
 ## [1.0.0] - 2026-07-29
 
 ### Added
